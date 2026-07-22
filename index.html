@@ -1,0 +1,91 @@
+<?php
+require_once __DIR__ . '/config/config.php';
+require_once __DIR__ . '/includes/functions.php';
+
+$services = getActiveServices();
+$announcements = getPublishedAnnouncements();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title><?= e(APP_NAME) ?></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <div>
+      <h1>ISAT U Dumangas Campus Clinic</h1>
+      <div class="tagline">Appointment Management System</div>
+    </div>
+    <div class="header-actions">
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+      <?php if (!empty($_SESSION['student'])): ?>
+        <a href="student/dashboard.php" class="btn btn-primary btn-sm">My Dashboard</a>
+      <?php else: ?>
+        <a href="login.php" class="btn btn-outline btn-sm">Student Login</a>
+        <a href="register.php" class="btn btn-accent btn-sm">Register</a>
+      <?php endif; ?>
+      <a href="admin/login.php" class="btn btn-outline btn-sm">Staff Login</a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="card glass" style="text-align:center;">
+    <h2 class="section-title" style="text-align:center;">Book a Clinic Appointment</h2>
+    <p style="color:var(--color-text-muted);max-width:560px;margin:0 auto 18px;">
+      Schedule a visit with the school nurse. Create a student account to book appointments,
+      track your visit history, and get instant SMS and email updates on your appointment status.
+    </p>
+    <?php if (!empty($_SESSION['student'])): ?>
+      <a href="student/book-appointment.php" class="btn btn-accent">Book an Appointment</a>
+    <?php else: ?>
+      <a href="register.php" class="btn btn-accent">Create a Student Account</a>
+      <a href="login.php" class="btn btn-outline">Already Registered? Log In</a>
+    <?php endif; ?>
+  </div>
+
+  <div class="card glass">
+    <h2 class="section-title">Clinic Hours &amp; Contact</h2>
+    <p style="margin:0;color:var(--color-text-muted);">
+      Monday – Friday, 8:00 AM – 5:00 PM &nbsp;|&nbsp; ISAT U Dumangas Campus, Dumangas, Iloilo<br>
+      For emergencies, proceed directly to the clinic - walk-ins are always welcome.
+    </p>
+  </div>
+
+  <div class="card glass">
+    <h2 class="section-title">Services Offered</h2>
+    <table>
+      <tr><th>Service</th><th>Description</th><th>Duration</th></tr>
+      <?php foreach ($services as $s): ?>
+      <tr>
+        <td><?= e($s['name']) ?></td>
+        <td><?= e($s['description']) ?></td>
+        <td><?= (int)$s['duration_minutes'] ?> mins</td>
+      </tr>
+      <?php endforeach; ?>
+    </table>
+  </div>
+
+  <?php if (!empty($announcements)): ?>
+  <div class="card glass">
+    <h2 class="section-title">Health Announcements</h2>
+    <?php foreach ($announcements as $a): ?>
+      <div class="announce-item">
+        <h4><?= e($a['title']) ?></h4>
+        <div class="date"><?= date('F j, Y', strtotime($a['created_at'])) ?></div>
+        <p><?= nl2br(e($a['body'])) ?></p>
+      </div>
+    <?php endforeach; ?>
+  </div>
+  <?php endif; ?>
+</div>
+
+<footer>&copy; <?= date('Y') ?> ISAT U Dumangas Campus Clinic. All rights reserved.</footer>
+<script src="assets/js/theme.js"></script>
+</body>
+</html>
